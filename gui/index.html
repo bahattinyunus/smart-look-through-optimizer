@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Akıllı Look-Through | Optimizasyon Konsolu</title>
+    <title>SLT-X | Teknik EH Optimizasyon Konsolu</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,62 +14,62 @@
     <main class="dashboard-container">
         <header class="main-header">
             <div class="logo">
-                <span class="glitch" data-text="AKILLI LOOK-THROUGH">AKILLI LOOK-THROUGH</span>
+                <span class="glitch" data-text="SLT-X OPTIMIZER">SLT-X OPTIMIZER</span>
             </div>
             <div class="system-status">
                 <div class="status-item">
-                    <span class="label">ÇEKİRDEK:</span>
-                    <span class="value online">SENKRONİZE</span>
+                    <span class="label">DURUM:</span>
+                    <span class="value online">OPERASYONEL</span>
                 </div>
                 <div class="status-item">
-                    <span class="label">ADAPTİF MOD:</span>
-                    <span class="value-toggle">AKTİF</span>
+                    <span class="label">SNR MARJI:</span>
+                    <span class="value glow-text">+12.4 dB</span>
                 </div>
             </div>
         </header>
 
         <section class="grid-layout">
             <div class="card signal-vis">
-                <div class="card-header">SİNYAL SPEKTROGRAMI</div>
+                <div class="card-header">SİNYAL ANALİZ SPEKTROGRAMI (EH-DOMAIN)</div>
                 <div class="card-content">
                     <canvas id="spectrogramCanvas"></canvas>
                 </div>
             </div>
 
             <div class="card metrics">
-                <div class="card-header">OPTİMİZASYON METRİKLERİ</div>
+                <div class="card-header">TEKNİK PARAMETRELER</div>
                 <div class="card-content">
                     <div class="metric-row">
-                        <span class="m-label">LT Penceresi (PW):</span>
-                        <span id="pwValue" class="m-value">12.5 ms</span>
+                        <span class="m-label">Look-Through (PW):</span>
+                        <span id="pwValue" class="m-value">-- ms</span>
                     </div>
                     <div class="metric-row">
-                        <span class="m-label">Tekrar Aralığı:</span>
-                        <span id="ivValue" class="m-value">320.0 ms</span>
+                        <span class="m-label">Tekrar Periyodu (T):</span>
+                        <span id="ivValue" class="m-value">-- ms</span>
                     </div>
                     <div class="metric-row">
-                        <span class="m-label">Karıştırıcı Etkinliği:</span>
-                        <span class="m-value glow-text">98.4%</span>
+                        <span class="m-label">Yol Kaybı (Est.):</span>
+                        <span id="lossValue" class="m-value">124.5 dB</span>
                     </div>
                     <div class="metric-row">
-                        <span class="m-label">Tehdit Hızı:</span>
-                        <span id="velValue" class="m-value">450 m/s</span>
+                        <span class="m-label">Ort. Tehdit Hızı:</span>
+                        <span id="velValue" class="m-value">-- m/s</span>
                     </div>
                 </div>
             </div>
 
             <div class="card log-console">
-                <div class="card-header">SİSTEM LOGLARI</div>
+                <div class="card-header">SİSTEM OLAYLARI</div>
                 <div id="logContent" class="card-content">
-                    <div class="log-entry">[SYS] Look-Through Motoru Başlatılıyor...</div>
-                    <div class="log-entry">[OK] Adaptif Optimizatör v2.4 Yüklendi.</div>
-                    <div class="log-entry">[TARAMA] Radar imzaları aranıyor...</div>
+                    <div class="log-entry">[SYS] SLT-X Fizik Motoru Yükleniyor...</div>
+                    <div class="log-entry">[INF] Sinyal Yayılım Modeli Aktif.</div>
+                    <div class="log-entry">[OK] Konsol Bağlantısı Kuruldu.</div>
                 </div>
             </div>
         </section>
 
         <footer>
-            <div class="footer-info">Tescilli EH Optimizatörü - Proje SLT-X</div>
+            <div class="footer-info">SLT-X v3.0 | ADAPTİF ELEKTRONİK HARP OPTİMİZASYON SİSTEMİ</div>
         </footer>
     </main>
     <script src="app.js"></script>
