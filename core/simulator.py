@@ -3,39 +3,45 @@ import random
 from optimizer import LookThroughOptimizer
 
 class EWSimulator:
+    """
+    Elektronik Harp (EH) Simülatörü.
+    Sentetik tehditler oluşturur ve optimizasyon motorunun tepkilerini test eder.
+    """
     def __init__(self):
         self.optimizer = LookThroughOptimizer()
-        self.active_threats = []
+        self.active_threats = [] # Aktif tehdit listesi
         self.running = True
 
     def spawn_threat(self):
+        """Yeni bir radar tehdidi oluşturur."""
         threat = {
             "id": random.randint(1000, 9999),
-            "velocity": random.uniform(200, 800),
+            "velocity": random.uniform(200, 800), # m/s
             "distance": random.uniform(50, 200) # km
         }
         self.active_threats.append(threat)
-        print(f"[THREAT SPAWNED] ID: {threat['id']}, Speed: {threat['velocity']:.2f} m/s")
+        print(f"[TEHDİT TESPİT EDİLDİ] Kimlik: {threat['id']}, Hız: {threat['velocity']:.2f} m/s")
 
     def run_simulation(self, iterations=10):
-        print("--- Starting Smart Look-Through Simulation ---")
+        """Simülasyon döngüsünü başlatır."""
+        print("--- Akıllı Look-Through Simülasyonu Başlatıldı ---")
         for i in range(iterations):
             if random.random() > 0.7:
                 self.spawn_threat()
             
             pw, iv = self.optimizer.optimize_look_through(self.active_threats)
-            print(f"Iteration {i+1}: Active Threats: {len(self.active_threats)}")
-            print(f"Applying Look-Through -> PW: {pw:.2f}ms, Interval: {iv:.2f}ms")
+            print(f"İterasyon {i+1}: Aktif Tehdit Sayısı: {len(self.active_threats)}")
+            print(f"Uygulanan Look-Through -> PW: {pw:.2f}ms, Aralık: {iv:.2f}ms")
             
-            # Simulate real-time delay
+            # Gerçek zamanlı gecikme simülasyonu
             time.sleep(0.5)
             
-            # Update threat distances
+            # Tehdit mesafelerini güncelle
             for t in self.active_threats:
-                t['distance'] -= (t['velocity'] * 0.5) / 1000 # Simplified
+                t['distance'] -= (t['velocity'] * 0.5) / 1000 # Basit mesafe düşümü
                 if t['distance'] < 0:
                     self.active_threats.remove(t)
-                    print(f"[TARGET NEUTRALIZED] ID: {t['id']}")
+                    print(f"[HEDEF ETKİSİZ HALE GETİRİLDİ] Kimlik: {t['id']}")
 
 if __name__ == "__main__":
     sim = EWSimulator()

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Look-Through | Optimizer Console</title>
+    <title>Akıllı Look-Through | Optimizasyon Konsolu</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,62 +14,62 @@
     <main class="dashboard-container">
         <header class="main-header">
             <div class="logo">
-                <span class="glitch" data-text="SMART LOOK-THROUGH">SMART LOOK-THROUGH</span>
+                <span class="glitch" data-text="AKILLI LOOK-THROUGH">AKILLI LOOK-THROUGH</span>
             </div>
             <div class="system-status">
                 <div class="status-item">
-                    <span class="label">CORE:</span>
-                    <span class="value online">SYNCHRONIZED</span>
+                    <span class="label">ÇEKİRDEK:</span>
+                    <span class="value online">SENKRONİZE</span>
                 </div>
                 <div class="status-item">
-                    <span class="label">ADAPTIVE MODE:</span>
-                    <span class="value-toggle">ACTIVE</span>
+                    <span class="label">ADAPTİF MOD:</span>
+                    <span class="value-toggle">AKTİF</span>
                 </div>
             </div>
         </header>
 
         <section class="grid-layout">
             <div class="card signal-vis">
-                <div class="card-header">SIGNAL SPECTROGRAM</div>
+                <div class="card-header">SİNYAL SPEKTROGRAMI</div>
                 <div class="card-content">
                     <canvas id="spectrogramCanvas"></canvas>
                 </div>
             </div>
 
             <div class="card metrics">
-                <div class="card-header">OPTIMIZATION METRICS</div>
+                <div class="card-header">OPTİMİZASYON METRİKLERİ</div>
                 <div class="card-content">
                     <div class="metric-row">
-                        <span class="m-label">LT Window (PW):</span>
+                        <span class="m-label">LT Penceresi (PW):</span>
                         <span id="pwValue" class="m-value">12.5 ms</span>
                     </div>
                     <div class="metric-row">
-                        <span class="m-label">Repetition Interval:</span>
+                        <span class="m-label">Tekrar Aralığı:</span>
                         <span id="ivValue" class="m-value">320.0 ms</span>
                     </div>
                     <div class="metric-row">
-                        <span class="m-label">Jammer Effectiveness:</span>
+                        <span class="m-label">Karıştırıcı Etkinliği:</span>
                         <span class="m-value glow-text">98.4%</span>
                     </div>
                     <div class="metric-row">
-                        <span class="m-label">Threat Velocity:</span>
+                        <span class="m-label">Tehdit Hızı:</span>
                         <span id="velValue" class="m-value">450 m/s</span>
                     </div>
                 </div>
             </div>
 
             <div class="card log-console">
-                <div class="card-header">SYSTEM LOGS</div>
+                <div class="card-header">SİSTEM LOGLARI</div>
                 <div id="logContent" class="card-content">
-                    <div class="log-entry">[SYS] Initializing Look-Through Engine...</div>
-                    <div class="log-entry">[OK] Adaptive Optimizer v2.4 Loaded.</div>
-                    <div class="log-entry">[SCAN] Searching for radar signatures...</div>
+                    <div class="log-entry">[SYS] Look-Through Motoru Başlatılıyor...</div>
+                    <div class="log-entry">[OK] Adaptif Optimizatör v2.4 Yüklendi.</div>
+                    <div class="log-entry">[TARAMA] Radar imzaları aranıyor...</div>
                 </div>
             </div>
         </section>
 
         <footer>
-            <div class="footer-info">PROPRIETARY EW OPTIMIZER - PROJECT SLT-X</div>
+            <div class="footer-info">Tescilli EH Optimizatörü - Proje SLT-X</div>
         </footer>
     </main>
     <script src="app.js"></script>

@@ -12,9 +12,6 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
-const signals = [];
-const lookThroughWindows = [];
-
 function addLog(msg) {
     const entry = document.createElement('div');
     entry.className = 'log-entry';
@@ -26,7 +23,7 @@ function draw() {
     ctx.fillStyle = '#0a0b10';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw Grid
+    // Izgara Çizimi
     ctx.strokeStyle = 'rgba(0, 242, 255, 0.05)';
     ctx.lineWidth = 1;
     for (let x = 0; x < canvas.width; x += 50) {
@@ -36,7 +33,7 @@ function draw() {
         ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
     }
 
-    // Simulate Signal pulses
+    // Sinyal Darbe Simülasyonu
     ctx.shadowBlur = 15;
     ctx.shadowColor = '#00f2ff';
     ctx.fillStyle = '#00f2ff';
@@ -46,7 +43,7 @@ function draw() {
         ctx.fillRect(x, 50, 10, canvas.height - 100);
     }
 
-    // Look-Through Overlay (Darkened bars)
+    // Look-Through Katmanı (Karartılmış çubuklar)
     ctx.shadowBlur = 0;
     ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
     let ltX = (Date.now() / 5) % canvas.width;
@@ -55,7 +52,7 @@ function draw() {
     requestAnimationFrame(draw);
 }
 
-// Adaptive update simulation
+// Adaptif güncelleme simülasyonu
 setInterval(() => {
     const pw = (10 + Math.random() * 5).toFixed(1);
     const iv = (300 + Math.random() * 50).toFixed(1);
@@ -66,9 +63,9 @@ setInterval(() => {
     velEl.textContent = vel + " m/s";
 
     if (Math.random() > 0.8) {
-        addLog(`Optimization Recalculated: PW=${pw}`);
+        addLog(`Optimizasyon Yeniden Hesaplandı: PW=${pw}`);
     }
 }, 2000);
 
 draw();
-addLog("Initialization complete. Awaiting threat input.");
+addLog("Başlatma tamamlandı. Tehdit girişi bekleniyor.");

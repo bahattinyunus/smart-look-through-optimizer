@@ -1,56 +1,56 @@
-﻿# 🛡️ Smart Look-Through Optimizer (SLT-X)
+﻿# 🛡️ Akıllı Look-Through Optimizatörü (SLT-X)
 
-> **Adaptive Electronic Warfare Timing Optimization for High-Stakes Signal Environments.**
+> **Yüksek Riskli Sinyal Ortamları İçin Adaptif Elektronik Harp Zamanlama Optimizasyonu.**
 
-![EW Banner](https://img.shields.io/badge/Status-Operational-00f2ff?style=for-the-badge&logo=target)
+![EH Durumu](https://img.shields.io/badge/Durum-Operasyonel-00f2ff?style=for-the-badge&logo=target)
 ![Python](https://img.shields.io/badge/Python-3.9+-blue?style=for-the-badge&logo=python)
-![UI](https://img.shields.io/badge/UI-Glassmorphism-purple?style=for-the-badge&logo=css3)
+![UI](https://img.shields.io/badge/Aray%C3%BCz-Glassmorphism-purple?style=for-the-badge&logo=css3)
 
-## 🌌 Overview
+## 🌌 Genel Bakış
 
-The **Smart Look-Through Optimizer (SLT-X)** is a next-generation Electronic Warfare (EW) utility designed to solve the *Look-Through Dilemma*. In modern jamming environments, a jammer must periodically cease transmission (the 'look-through' phase) to sample the environment and update its target's parameters.
+**Akıllı Look-Through Optimizatörü (SLT-X)**, modern Elektronik Harp (EH) sistemlerindeki *Look-Through İkilemi*'ni çözmek için tasarlanmış yeni nesil bir araçtır. Karıştırma (jamming) esnasında, sistemin ortamı örnekleyebilmesi ve hedef parametrelerini güncelleyebilmesi için periyodik olarak yayını durdurması (look-through aşaması) gerekir.
 
-SLT-X uses **Adaptive Heuristic Optimization** to dynamically adjust the pulse width and repetition interval of these look-through windows, ensuring maximum situational awareness while maintaining high jamming effectiveness.
+SLT-X, **Adaptif Sezgisel Optimizasyon** kullanarak bu pencerelerin genişliğini ve tekrar aralığını dinamik olarak ayarlar. Böylece maksimum durumsal farkındalık sağlanırken, karıştırma etkinliğinden ödün verilmez.
 
-## 🛠️ Architecture
+## 🛠️ Mimari
 
-\\\mermaid
+`mermaid
 graph TD
-    A[Radar Environment] -->|Signal Intercept| B(Adaptive Optimizer)
-    B -->|Calculate SNR| C{Decision Engine}
-    C -->|High Threat| D[Narrow LT Window / High Frequency]
-    C -->|Low Threat| E[Wide LT Window / Low Frequency]
-    D --> F[Jammer Controller]
+    A[Radar Ortamı] -->|Sinyal Yakalama| B(Adaptif Optimizatör)
+    B -->|SNR Hesaplama| C{Karar Mekanizması}
+    C -->|Yüksek Tehdit| D[Dar LT Penceresi / Yüksek Frekans]
+    C -->|Düşük Tehdit| E[Geniş LT Penceresi / Düşük Frekans]
+    D --> F[Karıştırıcı Kontrolcü]
     E --> F
-    F -->|Optimal Jamming| A
-\\\
+    F -->|Optimal Karıştırma| A
+`
 
-## 🚀 Key Features
+## 🚀 Temel Özellikler
 
-- **Adaptive LT Scaling:** Automatically adjusts monitoring windows based on threat velocity and signal-to-noise ratio (SNR).
-- **Glassmorphic Console:** A premium, real-time web dashboard for monitoring optimization metrics and signal spectrograms.
-- **EW Simulator:** Integrated simulation engine to test algorithms against synthetic radar profiles.
-- **Elite Performance:** Optimized for low-latency decision-making in high-density signal environments.
+- **Adaptif LT Ölçeklendirme:** Tehdit hızı ve Sinyal-Gürültü Oranı'na (SNR) göre izleme pencerelerini otomatik ayarlar.
+- **Glassmorphic Konsol:** Optimizasyon metriklerinin ve sinyal spektrogramının izlendiği premium gerçek zamanlı web arayüzü.
+- **EH Simülatörü:** Algoritmaları sentetik radar profillerine karşı test etmek için entegre simülasyon motoru.
+- **Üst Düzey Performans:** Yüksek yoğunluklu sinyal ortamlarında düşük gecikmeli karar verme için optimize edilmiştir.
 
-## 📂 Project Structure
+## 📂 Proje Yapısı
 
-- \core/\: Python-based logic and simulation.
-  - \optimizer.py\: The heart of the SLT-X algorithm.
-  - \simulator.py\: Synthetic EW environment launcher.
-- \gui/\: Premium dashboard files.
-  - \index.html\: Main console entry point.
-  - \styles.css\: Glassmorphic styling system.
-  - \pp.js\: Real-time visualization logic.
+- core/: Python tabanlı mantık ve simülasyon.
+  - optimizer.py: SLT-X algoritmasının kalbi.
+  - simulator.py: Sentetik EH ortamı başlatıcısı.
+- gui/: Premium dashboard dosyaları.
+  - index.html: Ana konsol giriş noktası.
+  - styles.css: Glassmorphic tasarım sistemi.
+  - pp.js: Gerçek zamanlı görselleştirme mantığı.
 
-## 🚦 Quick Start
+## 🚦 Hızlı Başlangıç
 
-1. **Run Simulation:**
-   \\\ash
+1. **Simülasyonu Çalıştır:**
+   `ash
    python core/simulator.py
-   \\\
-2. **Launch Dashboard:**
-   Open \gui/index.html\ in any modern browser for the visual experience.
+   `
+2. **Dashboard'u Başlat:**
+   gui/index.html dosyasını herhangi bir modern tarayıcıda açın.
 
 ---
 
-*Disclaimer: This project is a technical demonstration of EW concepts for educational and simulation purposes.*
+*Yasal Uyarı: Bu proje, eğitim ve simülasyon amaçlı bir teknik gösterimdir.*
