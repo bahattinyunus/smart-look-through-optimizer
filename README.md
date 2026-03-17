@@ -1,87 +1,81 @@
-﻿# 🛡️ Akıllı Look-Through Optimizatörü (SLT-X)
+# 🛡️ Akıllı Look-Through Optimizatörü (SLT-X) - Teknik Spesifikasyon
 
-> **Yüksek Riskli Sinyal Ortamları İçin Adaptif Elektronik Harp Zamanlama Optimizasyonu.**
+> **Yüksek Yoğunluklu RF Ortamlarında Adaptif EH Zamanlama ve İzleme Optimizasyonu Modeli.**
 
-![EH Durumu](https://img.shields.io/badge/Durum-Operasyonel-00f2ff?style=for-the-badge&logo=target)
-![Python](https://img.shields.io/badge/Python-3.9+-blue?style=for-the-badge&logo=python)
-![UI](https://img.shields.io/badge/Aray%C3%BCz-Glassmorphism-purple?style=for-the-badge&logo=css3)
+![EH Durumu](https://img.shields.io/badge/Versiyon-3.5_Stable-00f2ff?style=for-the-badge&logo=target)
+![Algoritma](https://img.shields.io/badge/Algoritma-Adaptive_Heuristic-blue?style=for-the-badge&logo=math)
+![Domain](https://img.shields.io/badge/Alan-Elektronik_Harp-red?style=for-the-badge&logo=signal)
 
-## 🌌 Genel Bakış
+## 🌌 1. Teorik Altyapı ve Fiziksel Modelleme
 
-**Akıllı Look-Through Optimizatörü (SLT-X)**, modern Elektronik Harp (EH) sistemlerindeki *Look-Through İkilemi*'ni çözmek için tasarlanmış yeni nesil bir araçtır. Karıştırma (jamming) esnasında, sistemin ortamı örnekleyebilmesi ve hedef parametrelerini güncelleyebilmesi için periyodik olarak yayını durdurması (look-through aşaması) gerekir.
+SLT-X, Elektronik Harp (EH) literatüründe "Zaman Paylaşımlı Alıcı-Verici Yönetimi" (Time-Shared Transceiver Management) olarak bilinen problemin optimizasyonuna odaklanır. Bir dijital frekans hafızalı (DRFM) karıştırıcı sisteminin, etkin yayını sürdürürken aynı anda spektral farkındalık kazanması için gereken "Look-Through" pencerelerini dinamik olarak yönetir.
 
-SLT-X, **Adaptif Sezgisel Optimizasyon** kullanarak bu pencerelerin genişliğini ve tekrar aralığını dinamik olarak ayarlar. Böylece maksimum durumsal farkındalık sağlanırken, karıştırma etkinliğinden ödün verilmez.
+### 1.1 Sinyal Yayılım ve Kayıp Analizi
+Sistem, sinyal bütçesini (Link Budget) anlık olarak hesaplarken Friis denklemini baz alan modifiye edilmiş bir serbest uzay yol kaybı modeli (FSPL) kullanır:
+$$L = 20 \log_{10}(d) + 20 \log_{10}(f) - 147.55 + A_{loss}$$
+Burada $d$ mesafe (km), $f$ ise frekanstır (Hz). $A_{loss}$ atmosferik ve çevresel sönümlenme katsayısını temsil eder.
 
-## 🛠️ Mimari
+### 1.2 SNR Karar Matrisi ve Karıştırma Marjı
+Hedef radarın tespit olasılığını ($P_d$) en aza indirmek için gereken karıştırma-sinyal oranı ($J/S$) sürekli analiz edilir. Efektif SNR hesaplaması:
+$$SNR_{eff} = |P_{target} - (N_{floor} + J_{gain} - L_{path})|$$
+Look-Through zamanlaması, hedefin bu $SNR$ değerini kompanse ederek takip (tracking) kurma kapasitesini kırmak üzerine kuruludur.
 
-`mermaid
+## 📐 2. Adaptif Optimizasyon Algoritması
+
+Sistemin kalbinde yer alan `LookThroughOptimizer`, çok değişkenli bir karar matrisi üzerinden çalışır.
+
+### 2.1 Zamanlama Parametreleri (PW ve RI)
+Zamanlama, iki temel kontrol değişkenine dayanır:
+- **Darbe Genişliği (Pulse Width - $PW_{LT}$):** Alıcının spektral örnekleme yapacağı pencerenin süresi.
+- **Tekrar Aralığı (Repeat Interval - $RI_{LT}$):** İki LT penceresi arasındaki RF yayın süresi.
+
+### 2.2 Dinamik Ölçeklendirme Fonksiyonları
+Sistem, tehditlerin dinamik risk skoruna ($\tau$) göre parametreleri şu fonksiyonlarla optimize eder:
+$$\tau = \sum_{i=1}^{n} (w_i \cdot v_i + p_i)$$
+Burada $w_i$ tehdit ağırlığı, $v_i$ hız ve $p_i$ tehdit tipine (örn: Atış Kontrol Radarı) bağlı öncelik katsayısıdır.
+
+- **Agresif Mod ($RI_{min}$):** $\tau > \tau_{threshold}$ ise $RI$ değeri %50 oranında daraltılır.
+- **Stabil Mod ($RI_{nom}$):** $\tau < \tau_{threshold}$ ise spektral temizlik için PW değeri maksimize edilir.
+
+## 🛠️ 3. Sistem Mimarisi (Architectural Overview)
+
+```mermaid
 graph TD
-    A[Radar Ortamı] -->|Sinyal Yakalama| B(Adaptif Optimizatör)
-    B -->|SNR Hesaplama| C{Karar Mekanizması}
-    C -->|Yüksek Tehdit| D[Dar LT Penceresi / Yüksek Frekans]
-    C -->|Düşük Tehdit| E[Geniş LT Penceresi / Düşük Frekans]
-    D --> F[Karıştırıcı Kontrolcü]
-    E --> F
-    F -->|Optimal Karıştırma| A
-`
+    subgraph RF Katmanı
+        R[Anten/Front-End] -->|Ham RF| S[SDR Alıcı]
+        S -->|IQ Data| D[DSP İşleme]
+    end
+    subgraph Optimizasyon Motoru
+        D -->|Özellik Çıkarımı| O[LookThroughOptimizer]
+        O -->|Politika Güncelleme| K[Karar Mekanizması]
+        K -->|Zamanlama Sinyali| G[Darbe Üreteci]
+    end
+    subgraph Görselleştirme ve Kontrol
+        G -->|Veri Akışı| H[WebSocket/JSON]
+        H -->|HUD Verisi| GUI[Web Dashboard]
+    end
+```
 
-## 🚀 Temel Özellikler
+## 🚀 4. Yazılım Bileşenleri ve Teknik Metotlar
 
-- **Adaptif LT Ölçeklendirme:** Tehdit hızı ve Sinyal-Gürültü Oranı'na (SNR) göre izleme pencerelerini otomatik ayarlar.
-- **Glassmorphic Konsol:** Optimizasyon metriklerinin ve sinyal spektrogramının izlendiği premium gerçek zamanlı web arayüzü.
-- **EH Simülatörü:** Algoritmaları sentetik radar profillerine karşı test etmek için entegre simülasyon motoru.
-- **Üst Düzey Performans:** Yüksek yoğunluklu sinyal ortamlarında düşük gecikmeli karar verme için optimize edilmiştir.
+### 4.1 'core/optimizer.py' - Fiziksel Motor
+- **Numpy Entegrasyonu:** Vektörel hesaplamalar ile $O(1)$ zaman karmaşıklığında anlık karar verme.
+- **Çoklu Tehdit Önceliklendirme:** Search, SAR ve FireControl radarları için farklılaşmış risk profilleri.
 
-## 📂 Proje Yapısı
+### 4.2 'core/simulator.py' - Stratejik Simülatör
+- **Sentetik Senaryo Üretimi:** Doppler kayması ve değişken yaklaşma hızlı tehditlerin simüle edilmesi.
+- **Fail-Safe Mekanizması:** Kritik hata durumlarında '10/500' pasif izleme moduna otomatik geçiş.
 
-- core/: Python tabanlı mantık ve simülasyon.
-  - optimizer.py: SLT-X algoritmasının kalbi.
-  - simulator.py: Sentetik EH ortamı başlatıcısı.
-- gui/: Premium dashboard dosyaları.
-  - index.html: Ana konsol giriş noktası.
-  - styles.css: Glassmorphic tasarım sistemi.
-  - pp.js: Gerçek zamanlı görselleştirme mantığı.
+### 4.3 'gui/' - Gerçek Zamanlı Analiz Konsolu
+- **60 FPS Canvas Rendering:** Yüksek frekanslı sinyal spektrogram görselleştirmesi.
+- **Glassmorphic HUD:** Mühendislik odaklı, düşük göz yorgunluğu hedefleyen veri görselleştirme sistemi.
 
-## 🚦 Hızlı Başlangıç
+## 🚦 5. Teknik Spesifikasyonlar ve Gereksinimler
 
-1. **Simülasyonu Çalıştır:**
-   `ash
-   python core/simulator.py
-   `
-2. **Dashboard'u Başlat:**
-   gui/index.html dosyasını herhangi bir modern tarayıcıda açın.
-
----
-
-*Yasal Uyarı: Bu proje, eğitim ve simülasyon amaçlı bir teknik gösterimdir.*
-
-## 📖 Kullanım Kılavuzu
-
-### 🛡️ Simülasyonu Başlatma
-Sistemin adaptif yeteneklerini test etmek için simülatörü çalıştırın:
-\\\ash
-python core/simulator.py
-\\\
-Bu komut, rastgele radar tehditleri (Search, SAR, FireControl) oluşturur ve optimizatörün her tehdit tipine nasıl tepki verdiğini terminale yazdırır.
-
-### 📊 Dashboard İzleme
-\gui/index.html\ dosyasını tarayıcınızda açtığınızda:
-1.  **Sinyal Spektrogramı:** RF ortamındaki anlık aktiviteyi görselleştirir.
-2.  **Tehdit Matrisi:** Aktif tehditlerin türünü, mesafesini ve hızını anlık listeler.
-3.  **Optimizasyon Metrikleri:** PW (LT Genişliği) ve T (Tekrar Aralığı) değerlerinin nasıl değiştiğini takip edebilirsiniz.
-
-## 🛠️ Hata Yönetimi ve Sıkça Sorulan Sorular
-
-**S: 'ModuleNotFoundError: No module named 'numpy'' hatası alıyorum.**
-**C:** Sistem matematiksel hesaplamalar için \
-umpy\ kütüphanesine ihtiyaç duyar. \pip install -r requirements.txt\ komutu ile eksik bağımlılıkları yükleyebilirsiniz.
-
-**S: Dashboard'da veri akışı görünmüyor.**
-**C:** Dashboard statik bir demonstrasyon arayüzüdür. Gerçek zamanlı Python verisi ile tam entegrasyon için bir WebSocket katmanı gereklidir (SLT-X v4.0 planlamasındadır). Mevcut versiyonda \pp.js\ içindeki simülasyon motoru çalışmaktadır.
-
-**S: Atış Kontrol (FireControl) radarları neden daha sık LT penceresi tetikliyor?**
-**C:** Atış kontrol radarları 'lock-on' durumunda olduklarından, bu tehditlerin parametre değişimlerini (f0 kayması vb.) daha sık takip etmek hayati önem taşır. Algoritma bu durumda RI (Repeat Interval) değerini otomatik olarak minimize eder.
+- **Runtime:** Python 3.9+ (C-Python Interpreter önerilir).
+- **CPU:** Sabit frekans ve düşük gecikme için gerçek zamanlı önceliklendirme desteği.
+- **Gereksinimler:** \`numpy >= 1.20.0\` kütüphanesi.
 
 ---
 
-*SLT-X: Görünmeyeni Gör, Bilinmeyeni Yönet.*
+*Teknik Not: Bu sistem, ECM (Elektronik Karşı Tedbir) stratejilerini optimize etmek için geliştirilmiş teorik bir modeldir.*
