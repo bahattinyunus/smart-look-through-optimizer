@@ -137,6 +137,34 @@ body.dark-theme {
     overflow-y: auto;
 }
 
+.t-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+}
+
+.t-table th {
+    text-align: left;
+    color: #888;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.t-table td {
+    padding: 8px 0;
+    color: var(--text-main);
+}
+
+.t-type {
+    color: #ffaa00;
+    font-weight: bold;
+}
+
+.t-type.fire-control {
+    color: #ff4444;
+    text-shadow: 0 0 5px #ff444488;
+}
+
 .log-entry::before {
     content: "> ";
     color: var(--primary-color);

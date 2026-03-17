@@ -54,3 +54,34 @@ graph TD
 ---
 
 *Yasal Uyarı: Bu proje, eğitim ve simülasyon amaçlı bir teknik gösterimdir.*
+
+## 📖 Kullanım Kılavuzu
+
+### 🛡️ Simülasyonu Başlatma
+Sistemin adaptif yeteneklerini test etmek için simülatörü çalıştırın:
+\\\ash
+python core/simulator.py
+\\\
+Bu komut, rastgele radar tehditleri (Search, SAR, FireControl) oluşturur ve optimizatörün her tehdit tipine nasıl tepki verdiğini terminale yazdırır.
+
+### 📊 Dashboard İzleme
+\gui/index.html\ dosyasını tarayıcınızda açtığınızda:
+1.  **Sinyal Spektrogramı:** RF ortamındaki anlık aktiviteyi görselleştirir.
+2.  **Tehdit Matrisi:** Aktif tehditlerin türünü, mesafesini ve hızını anlık listeler.
+3.  **Optimizasyon Metrikleri:** PW (LT Genişliği) ve T (Tekrar Aralığı) değerlerinin nasıl değiştiğini takip edebilirsiniz.
+
+## 🛠️ Hata Yönetimi ve Sıkça Sorulan Sorular
+
+**S: 'ModuleNotFoundError: No module named 'numpy'' hatası alıyorum.**
+**C:** Sistem matematiksel hesaplamalar için \
+umpy\ kütüphanesine ihtiyaç duyar. \pip install -r requirements.txt\ komutu ile eksik bağımlılıkları yükleyebilirsiniz.
+
+**S: Dashboard'da veri akışı görünmüyor.**
+**C:** Dashboard statik bir demonstrasyon arayüzüdür. Gerçek zamanlı Python verisi ile tam entegrasyon için bir WebSocket katmanı gereklidir (SLT-X v4.0 planlamasındadır). Mevcut versiyonda \pp.js\ içindeki simülasyon motoru çalışmaktadır.
+
+**S: Atış Kontrol (FireControl) radarları neden daha sık LT penceresi tetikliyor?**
+**C:** Atış kontrol radarları 'lock-on' durumunda olduklarından, bu tehditlerin parametre değişimlerini (f0 kayması vb.) daha sık takip etmek hayati önem taşır. Algoritma bu durumda RI (Repeat Interval) değerini otomatik olarak minimize eder.
+
+---
+
+*SLT-X: Görünmeyeni Gör, Bilinmeyeni Yönet.*

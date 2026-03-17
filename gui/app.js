@@ -73,24 +73,52 @@ function draw() {
 }
 
 // Dinamik Veri Simülasyonu
-setInterval(() => {
-    const pw = (15 + Math.random() * 10).toFixed(1);
-    const iv = (250 + Math.random() * 100).toFixed(1);
-    const vel = (300 + Math.random() * 400).toFixed(0);
-    const loss = (120 + Math.random() * 15).toFixed(1);
+const threatBody = document.getElementById('threatBody');
+
+function updateThreats() {
+    const types = ["Search", "SAR", "FireControl", "TargetTrack"];
+    const count = Math.floor(Math.random() * 4) + 1;
+    threatBody.innerHTML = '';
     
+    let totalVel = 0;
+    
+    for (let i = 0; i < count; i++) {
+        const id = Math.floor(Math.random() * 9000) + 1000;
+        const type = types[Math.floor(Math.random() * types.length)];
+        const dist = (50 + Math.random() * 150).toFixed(1);
+        const vel = (200 + Math.random() * 600).toFixed(0);
+        totalVel += parseInt(vel);
+        
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>#${id}</td>
+            <td class="t-type ${type === 'FireControl' ? 'fire-control' : ''}">${type}</td>
+            <td>${dist} km</td>
+            <td>${vel} m/s</td>
+        `;
+        threatBody.appendChild(tr);
+    }
+    
+    const avgVel = (totalVel / count).toFixed(0);
+    const pw = (15 + (count * 5) + Math.random() * 5).toFixed(1);
+    const iv = (250 - (avgVel / 10) + Math.random() * 20).toFixed(1);
+    const loss = (120 + Math.random() * 15).toFixed(1);
+
     pwEl.textContent = pw + " ms";
     ivEl.textContent = iv + " ms";
-    velEl.textContent = vel + " m/s";
+    velEl.textContent = avgVel + " m/s";
     lossEl.textContent = loss + " dB";
 
     if (Math.random() > 0.9) {
         addLog(`Adaptif PW Güncellemesi: ${pw}ms`, 'info');
     }
-    if (vel > 650) {
-        addLog(`KRİTİK TEHDİT: Hız Sınırı Aşıldı (${vel} m/s)`, 'alert');
+    if (avgVel > 650) {
+        addLog(`KRİTİK TEHDİT: Hız Sınırı Aşıldı (${avgVel} m/s)`, 'alert');
     }
-}, 1500);
+}
+
+setInterval(updateThreats, 2000);
+updateThreats();
 
 draw();
 addLog("Sistem senkronizasyonu tamamlandı.");

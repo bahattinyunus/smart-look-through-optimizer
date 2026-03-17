@@ -13,14 +13,16 @@ class EWSimulator:
         self.running = True
 
     def spawn_threat(self):
-        """Yeni bir radar tehdidi oluşturur."""
+        """Yeni bir radar tehdidi oluşturur (Çeşitlendirilmiş Tipler)."""
+        types = ["Search", "SAR", "FireControl", "TargetTrack"]
         threat = {
             "id": random.randint(1000, 9999),
-            "velocity": random.uniform(200, 800), # m/s
-            "distance": random.uniform(50, 200) # km
+            "type": random.choice(types),
+            "velocity": random.uniform(200, 900), # m/s
+            "distance": random.uniform(50, 250) # km
         }
         self.active_threats.append(threat)
-        print(f"[TEHDİT TESPİT EDİLDİ] Kimlik: {threat['id']}, Hız: {threat['velocity']:.2f} m/s")
+        print(f"[TEHDİT TESPİT EDİLDİ] Kimlik: {threat['id']}, Tür: {threat['type']}, Hız: {threat['velocity']:.2f} m/s")
 
     def run_simulation(self, iterations=10):
         """Simülasyon döngüsünü başlatır."""

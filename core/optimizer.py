@@ -33,27 +33,35 @@ class LookThroughOptimizer:
 
     def optimize_look_through(self, current_threats):
         """
-        Gelişmiş adaptif ölçeklendirme algoritması.
+        Gelişmiş adaptif ölçeklendirme algoritması (Önceliklendirme Destekli).
         
-        Tehdit sayısı ve ortalama yaklaşma hızına göre PW ve RI değerlerini optimize eder.
+        Tehdit sayısı, hızı ve türüne göre PW ve RI değerlerini optimize eder.
         """
         threat_count = len(current_threats)
         if threat_count == 0:
-            return 10.0, 500.0 # Pasif mod (10ms PW, 500ms Interval)
+            return 10.0, 500.0
         
-        # Tehdit dinamiklerini analiz et
+        # Tehdit önceliklendirme
+        # FireControl (Atış Kontrol) -> Yüksek Öncelik
+        # SAR/Search -> Orta/Düşük Öncelik
+        high_priority_detected = any(t.get('type') == 'FireControl' for t in current_threats)
+        
         velocities = [t.get('velocity', 300) for t in current_threats]
         avg_velocity = np.mean(velocities)
         
-        # Risk parametrelerini hesapla
-        # Yüksek hız -> daha sık örnekleme
-        # Yüksek sayı -> daha geniş izleme penceresi
+        # Temel PW ve Interval hesaplama
+        pulse_width = np.clip(10 + (threat_count * 5), 10, 60)
+        interval = np.clip(1000 / (avg_velocity / 100 + 1), 50, 400)
         
-        pulse_width = np.clip(10 + (threat_count * 5), 10, 60) # ms
-        interval = np.clip(1000 / (avg_velocity / 100 + 1), 50, 400) # ms
-        
-        # Teknik Karar: Eğer hız çok yüksekse, LT aralığını daralt (Örn: 50ms)
-        if avg_velocity > 600:
+        # Öncelik tabanlı agresiflik ayarı
+        if high_priority_detected:
+            # Atış kontrol radarı varsa, tespit olasılığını artırmak için:
+            # - LT aralığını ciddi şekilde daralt (sık örnekleme)
+            # - LT genişliğini (PW) biraz artır
+            interval = max(30, interval * 0.5)
+            pulse_width = min(70, pulse_width * 1.2)
+            
+        elif avg_velocity > 600:
             interval = max(50, interval * 0.8)
             
         return float(pulse_width), float(interval)
