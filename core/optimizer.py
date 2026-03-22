@@ -1,5 +1,8 @@
 import numpy as np
-from q_learning import QLearningAgent
+try:
+    from core.q_learning import QLearningAgent
+except ImportError:
+    from q_learning import QLearningAgent
 
 class LookThroughOptimizer:
     """
@@ -19,17 +22,21 @@ class LookThroughOptimizer:
         self.last_action = 0
         
     def calculate_path_loss(self, distance_km):
-        """Friis bazlı log-mesafe yol kaybı modeli."""
-        return 20 * np.log10(distance_km) + 20 * np.log10(self.radar_freq) - 147.55
+        """Friis bazlı log-mesafe yol kaybı modeli (d in km, f in Hz)."""
+        # FSPL = 20log10(d_km) + 20log10(f_Hz) - 87.55
+        return 20 * np.log10(max(0.001, distance_km)) + 20 * np.log10(self.radar_freq) - 87.55
         
     def calculate_snr(self, distance_km, jammer_active=True):
-        """Efektif Sinyal-Gürültü Oranı hesaplaması."""
+        """Efektif Sinyal-Gürültü Oranı hesaplaması (Hedefteki Durum)."""
         path_loss = self.calculate_path_loss(max(0.1, distance_km))
-        signal_power = 60 - path_loss # Varsayılan hedef gücü
+        # Hedefteki radar sinyal gücü (Basitleştirilmiş: P_target - 2*PathLoss + Masking)
+        signal_power = 100 - (2 * path_loss) 
         
         if jammer_active:
-            # Karıştırıcı etkisindeki gürültü artışı
-            total_noise = self.noise_floor + self.jammer_power - path_loss + self.jamming_margin
+            # Karıştırıcı gücü hedefte: P_jammer - PathLoss
+            jammer_at_target = self.jammer_power - path_loss + self.jamming_margin
+            # dB bazlı gürültü birleştirme (Basit max veya log-sum)
+            total_noise = max(self.noise_floor, jammer_at_target)
         else:
             total_noise = self.noise_floor
             

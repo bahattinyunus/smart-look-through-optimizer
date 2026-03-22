@@ -1,5 +1,7 @@
 import numpy as np
 import random
+import json
+import os
 
 class QLearningAgent:
     """
@@ -12,9 +14,11 @@ class QLearningAgent:
         self.lr = learning_rate
         self.gamma = discount_factor
         self.epsilon = epsilon
+        self.model_path = os.path.join(os.path.dirname(__file__), "q_table.json")
         
         # Q-Tablosu: [Durum, Aksiyon]
         self.q_table = np.zeros((n_states, n_actions))
+        self.load_model()
 
     def get_state(self, threat_count):
         """Tehdit sayısını 0-9 arası bir duruma normalize eder."""
@@ -46,3 +50,23 @@ class QLearningAgent:
         if snr < 10 and interval < 300: reward += 10 # Verimli EH
         
         return reward
+
+    def save_model(self):
+        """Q-tablosunu JSON olarak kaydeder."""
+        try:
+            with open(self.model_path, "w") as f:
+                json.dump(self.q_table.tolist(), f)
+            # print(f"[AI] Model kaydedildi: {self.model_path}")
+        except Exception as e:
+            print(f"[AI] Kayıt hatası: {e}")
+
+    def load_model(self):
+        """Q-tablosunu JSON'dan yükler."""
+        if os.path.exists(self.model_path):
+            try:
+                with open(self.model_path, "r") as f:
+                    data = json.load(f)
+                    self.q_table = np.array(data)
+                print(f"[AI] Mevcut model yüklendi: {self.model_path}")
+            except Exception as e:
+                print(f"[AI] Yükleme hatası: {e}")

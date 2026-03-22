@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  slt-x-backend:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./core/q_table.json:/app/core/q_table.json
+    restart: always
+
+  # Opopsiyonel: Frontend için basit bir Nginx sunucusu eklenebilir
+  # Ancak geliştirme aşamasında index.html'i doğrudan açmak yeterlidir.

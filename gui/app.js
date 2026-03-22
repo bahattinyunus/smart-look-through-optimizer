@@ -83,6 +83,9 @@ function connect() {
         connStatusEl.textContent = "ÇEVRİMİÇİ (CANLI)";
         connStatusEl.className = "value online";
         if (simInterval) clearInterval(simInterval);
+        
+        // Mevcut senaryoyu sunucuya bildir (opsiyonel)
+        setScenario('RANDOM');
     };
 
     socket.onmessage = (event) => {
@@ -125,6 +128,28 @@ function renderData(data) {
     });
 
     if (log) addLog(log, 'info');
+}
+
+function setScenario(type) {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(json.stringify({ type: 'CMD_SET_SCENARIO', value: type }));
+        document.getElementById('activeScenario').textContent = type;
+        
+        // Button style update
+        document.querySelectorAll('.s-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.textContent.toUpperCase() === type || 
+               (type === 'RANDOM' && btn.textContent === 'Rastgele') ||
+               (type === 'AGGRESSIVE' && btn.textContent === 'Agresif') ||
+               (type === 'STEALTH' && btn.textContent === 'Gizli')) {
+                btn.classList.add('active');
+            }
+        });
+        
+        addLog(`Senaryo Değiştirildi: ${type}`, 'info');
+    } else {
+        addLog("Hata: Sunucu bağlantısı yok.", "warning");
+    }
 }
 
 // Fallback Simülasyonu (Orijinal Mantık)

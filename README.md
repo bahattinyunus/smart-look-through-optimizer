@@ -2,7 +2,7 @@
 
 > **Yüksek Yoğunluklu RF Ortamlarında Adaptif EH Zamanlama ve İzleme Optimizasyonu Modeli.**
 
-![EH Durumu](https://img.shields.io/badge/Versiyon-4.0_Stable-00f2ff?style=for-the-badge&logo=target)
+![EH Durumu](https://img.shields.io/badge/Versiyon-4.2_LTS-00f2ff?style=for-the-badge&logo=target)
 ![AI Engine](https://img.shields.io/badge/AI_Engine-Q--Learning-green?style=for-the-badge&logo=openai)
 ![Algoritma](https://img.shields.io/badge/Algoritma-Adaptive_Heuristic-blue?style=for-the-badge&logo=math)
 ![Domain](https://img.shields.io/badge/Alan-Elektronik_Harp-red?style=for-the-badge&logo=signal)
@@ -78,8 +78,9 @@ graph TD
 ## 🚦 5. Teknik Spesifikasyonlar ve Gereksinimler
 
 - **Runtime:** Python 3.9+ (C-Python Interpreter önerilir).
-- **CPU:** Sabit frekans ve düşük gecikme için gerçek zamanlı önceliklendirme desteği.
-- **Gereksinimler:** \`numpy >= 1.20.0\` kütüphanesi.
+- **Docker:** `docker-compose up --build` ile anında kurulum.
+- **Persistence:** Q-Learning modelleri `core/q_table.json` dosyasında saklanır.
+- **Gereksinimler:** `fastapi`, `uvicorn`, `websockets`, `numpy`.
 
 ---
 

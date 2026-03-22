@@ -62,6 +62,18 @@
                 </div>
             </div>
 
+            <div class="card scenario-control">
+                <div class="card-header">SENARYO KONTROL</div>
+                <div class="card-content">
+                    <div class="scenario-buttons">
+                        <button class="s-btn" onclick="setScenario('RANDOM')">Rastgele</button>
+                        <button class="s-btn" onclick="setScenario('AGGRESSIVE')">Agresif</button>
+                        <button class="s-btn stealth" onclick="setScenario('STEALTH')">Gizli</button>
+                    </div>
+                    <div class="cur-scent">Aktif: <span id="activeScenario">RANDOM</span></div>
+                </div>
+            </div>
+
             <div class="card threat-list">
                 <div class="card-header">AKTİF TEHDİT MATRİSİ</div>
                 <div class="card-content">
