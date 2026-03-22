@@ -2,7 +2,8 @@
 
 > **Yüksek Yoğunluklu RF Ortamlarında Adaptif EH Zamanlama ve İzleme Optimizasyonu Modeli.**
 
-![EH Durumu](https://img.shields.io/badge/Versiyon-3.5_Stable-00f2ff?style=for-the-badge&logo=target)
+![EH Durumu](https://img.shields.io/badge/Versiyon-4.0_Stable-00f2ff?style=for-the-badge&logo=target)
+![AI Engine](https://img.shields.io/badge/AI_Engine-Q--Learning-green?style=for-the-badge&logo=openai)
 ![Algoritma](https://img.shields.io/badge/Algoritma-Adaptive_Heuristic-blue?style=for-the-badge&logo=math)
 ![Domain](https://img.shields.io/badge/Alan-Elektronik_Harp-red?style=for-the-badge&logo=signal)
 
@@ -37,6 +38,9 @@ Burada $w_i$ tehdit ağırlığı, $v_i$ hız ve $p_i$ tehdit tipine (örn: Atı
 - **Agresif Mod ($RI_{min}$):** $\tau > \tau_{threshold}$ ise $RI$ değeri %50 oranında daraltılır.
 - **Stabil Mod ($RI_{nom}$):** $\tau < \tau_{threshold}$ ise spektral temizlik için PW değeri maksimize edilir.
 
+### 2.3 Q-Learning AI Modülü
+Sistem, statik kuralların ötesinde, `core/q_learning.py` üzerinden bir RL (Pekiştirmeli Öğrenme) ajanı kullanır. Ajan, PW ve RI değerlerini SNR geri beslemesi ve tehdit yoğunluğuna göre optimize ederek en yüksek EH etkinliğini hedefler.
+
 ## 🛠️ 3. Sistem Mimarisi (Architectural Overview)
 
 ```mermaid
@@ -51,8 +55,8 @@ graph TD
         K -->|Zamanlama Sinyali| G[Darbe Üreteci]
     end
     subgraph Görselleştirme ve Kontrol
-        G -->|Veri Akışı| H[WebSocket/JSON]
-        H -->|HUD Verisi| GUI[Web Dashboard]
+        G -->|WebSocket/JSON| S[FastAPI Server]
+        S -->|Gerçek Zamanlı Veri| GUI[Web Dashboard]
     end
 ```
 
@@ -67,8 +71,9 @@ graph TD
 - **Fail-Safe Mekanizması:** Kritik hata durumlarında '10/500' pasif izleme moduna otomatik geçiş.
 
 ### 4.3 'gui/' - Gerçek Zamanlı Analiz Konsolu
+- **WebSocket Entegrasyonu:** `server.py` üzerinden gelen canlı verileri işleyen dinamik HUD.
 - **60 FPS Canvas Rendering:** Yüksek frekanslı sinyal spektrogram görselleştirmesi.
-- **Glassmorphic HUD:** Mühendislik odaklı, düşük göz yorgunluğu hedefleyen veri görselleştirme sistemi.
+- **Auto-Fallback Simülasyonu:** Sunucu çevrimdışı olduğunda otomatik olarak yerel simülasyon moduna geçiş.
 
 ## 🚦 5. Teknik Spesifikasyonlar ve Gereksinimler
 

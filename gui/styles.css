@@ -71,6 +71,11 @@ body.dark-theme {
     text-shadow: 0 0 10px #00ff8888;
 }
 
+.status-item .value.offline {
+    color: #ff4444;
+    text-shadow: 0 0 10px #ff444488;
+}
+
 .grid-layout {
     display: grid;
     grid-template-columns: 2fr 1fr;

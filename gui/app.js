@@ -72,54 +72,100 @@ function draw() {
     requestAnimationFrame(draw);
 }
 
-// Dinamik Veri Simülasyonu
-const threatBody = document.getElementById('threatBody');
+let socket = null;
+const connStatusEl = document.getElementById('connStatus');
 
-function updateThreats() {
+function connect() {
+    socket = new WebSocket('ws://localhost:8000/ws');
+    
+    socket.onopen = () => {
+        addLog("Sunucu bağlantısı sağlandı. Gerçek zamanlı veriye geçiliyor.", "info");
+        connStatusEl.textContent = "ÇEVRİMİÇİ (CANLI)";
+        connStatusEl.className = "value online";
+        if (simInterval) clearInterval(simInterval);
+    };
+
+    socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        renderData(data);
+    };
+
+    socket.onclose = () => {
+        addLog("Sunucu bağlantısı kesildi. Simülasyon moduna dönülüyor.", "warning");
+        connStatusEl.textContent = "ÇEVRİMDIŞI (SİM)";
+        connStatusEl.className = "value offline";
+        startSimulation();
+    };
+
+    socket.onerror = () => {
+        // Sessiz hata, simülasyon zaten çalışıyor olacak
+    };
+}
+
+function renderData(data) {
+    const { metrics, threats, log } = data;
+    
+    // Metrikler
+    pwEl.textContent = metrics.pw + " ms";
+    ivEl.textContent = metrics.iv + " ms";
+    velEl.textContent = metrics.avg_vel + " m/s";
+    lossEl.textContent = metrics.loss + " dB";
+
+    // Tehdit Tablosu
+    threatBody.innerHTML = '';
+    threats.forEach(t => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>#${t.id}</td>
+            <td class="t-type ${t.type === 'FireControl' ? 'fire-control' : ''}">${t.type}</td>
+            <td>${t.distance.toFixed(1)} km</td>
+            <td>${t.velocity.toFixed(0)} m/s</td>
+        `;
+        threatBody.appendChild(tr);
+    });
+
+    if (log) addLog(log, 'info');
+}
+
+// Fallback Simülasyonu (Orijinal Mantık)
+let simInterval = null;
+function startSimulation() {
+    if (simInterval) clearInterval(simInterval);
+    simInterval = setInterval(updateThreatsManual, 2000);
+}
+
+function updateThreatsManual() {
     const types = ["Search", "SAR", "FireControl", "TargetTrack"];
     const count = Math.floor(Math.random() * 4) + 1;
-    threatBody.innerHTML = '';
-    
+    let threats = [];
     let totalVel = 0;
     
     for (let i = 0; i < count; i++) {
-        const id = Math.floor(Math.random() * 9000) + 1000;
-        const type = types[Math.floor(Math.random() * types.length)];
-        const dist = (50 + Math.random() * 150).toFixed(1);
-        const vel = (200 + Math.random() * 600).toFixed(0);
-        totalVel += parseInt(vel);
-        
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>#${id}</td>
-            <td class="t-type ${type === 'FireControl' ? 'fire-control' : ''}">${type}</td>
-            <td>${dist} km</td>
-            <td>${vel} m/s</td>
-        `;
-        threatBody.appendChild(tr);
+        const vel = 200 + Math.random() * 600;
+        totalVel += vel;
+        threats.push({
+            id: 1000 + Math.floor(Math.random() * 9000),
+            type: types[Math.floor(Math.random() * types.length)],
+            distance: 50 + Math.random() * 150,
+            velocity: vel
+        });
     }
-    
-    const avgVel = (totalVel / count).toFixed(0);
-    const pw = (15 + (count * 5) + Math.random() * 5).toFixed(1);
-    const iv = (250 - (avgVel / 10) + Math.random() * 20).toFixed(1);
-    const loss = (120 + Math.random() * 15).toFixed(1);
 
-    pwEl.textContent = pw + " ms";
-    ivEl.textContent = iv + " ms";
-    velEl.textContent = avgVel + " m/s";
-    lossEl.textContent = loss + " dB";
-
-    if (Math.random() > 0.9) {
-        addLog(`Adaptif PW Güncellemesi: ${pw}ms`, 'info');
-    }
-    if (avgVel > 650) {
-        addLog(`KRİTİK TEHDİT: Hız Sınırı Aşıldı (${avgVel} m/s)`, 'alert');
-    }
+    renderData({
+        metrics: {
+            pw: (15 + (count * 5) + Math.random() * 5).toFixed(1),
+            iv: (250 - (totalVel / count / 10) + Math.random() * 20).toFixed(1),
+            avg_vel: (totalVel / count).toFixed(0),
+            loss: (120 + Math.random() * 15).toFixed(1)
+        },
+        threats: threats
+    });
 }
 
-setInterval(updateThreats, 2000);
-updateThreats();
-
+// Başlangıç
 draw();
+startSimulation();
+setTimeout(connect, 1000); // Sunucuya bağlanmayı dene
+
 addLog("Sistem senkronizasyonu tamamlandı.");
 addLog("Fiziksel sinyal modelleri aktif.");

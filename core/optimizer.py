@@ -1,4 +1,5 @@
 import numpy as np
+from q_learning import QLearningAgent
 
 class LookThroughOptimizer:
     """
@@ -13,6 +14,9 @@ class LookThroughOptimizer:
         self.noise_floor = -110 # dBm
         self.jammer_power = 40 # dBm (EIRP)
         self.jamming_margin = 10 # dB
+        self.agent = QLearningAgent()
+        self.last_state = 0
+        self.last_action = 0
         
     def calculate_path_loss(self, distance_km):
         """Friis bazlı log-mesafe yol kaybı modeli."""
@@ -49,22 +53,31 @@ class LookThroughOptimizer:
         velocities = [t.get('velocity', 300) for t in current_threats]
         avg_velocity = np.mean(velocities)
         
-        # Temel PW ve Interval hesaplama
+        # Heuristic base values
         pulse_width = np.clip(10 + (threat_count * 5), 10, 60)
         interval = np.clip(1000 / (avg_velocity / 100 + 1), 50, 400)
         
-        # Öncelik tabanlı agresiflik ayarı
-        if high_priority_detected:
-            # Atış kontrol radarı varsa, tespit olasılığını artırmak için:
-            # - LT aralığını ciddi şekilde daralt (sık örnekleme)
-            # - LT genişliğini (PW) biraz artır
-            interval = max(30, interval * 0.5)
-            pulse_width = min(70, pulse_width * 1.2)
-            
-        elif avg_velocity > 600:
-            interval = max(50, interval * 0.8)
-            
-        return float(pulse_width), float(interval)
+        # AI-Steering
+        state = self.agent.get_state(threat_count)
+        action = self.agent.choose_action(state)
+        
+        # Apply AI action modifiers
+        if action == 0: interval *= 0.8  # Shorten RI
+        if action == 1: interval *= 1.2  # Longen RI
+        if action == 2: pulse_width *= 0.8 # Shrink PW
+        if action == 3: pulse_width *= 1.2 # Expand PW
+        
+        # Learning step (Simple reward feedback based on SNR estimate at average distance)
+        avg_dist = np.mean([t.get('distance', 100) for t in current_threats]) if current_threats else 100
+        current_snr = self.calculate_snr(avg_dist)
+        reward = self.agent.get_reward(current_snr, interval, threat_count)
+        self.agent.learn(self.last_state, self.last_action, reward, state)
+        
+        self.last_state = state
+        self.last_action = action
+
+        # Security clamps
+        return float(np.clip(pulse_width, 5, 100)), float(np.clip(interval, 20, 800))
 
 if __name__ == "__main__":
     opt = LookThroughOptimizer()
